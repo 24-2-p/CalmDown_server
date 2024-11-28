@@ -1,20 +1,26 @@
 {
   "name": "calmdown_server",
+  "type": "module",
   "version": "1.0.0",
   "description": "프로젝트 팀원 매칭 서비스 (Node.js / Express)",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/app.js",
+    "dev": "nodemon -e js,json,prisma --exec \"prisma generate && node src/app.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "^5.22.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "express": "^4.21.1"
+    "express": "^5.0.0",
+    "http-status-codes": "^2.3.0",
+    "prisma": "^5.22.0",
+    "swagger-autogen": "^2.23.7",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.7"
