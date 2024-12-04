@@ -1,9 +1,9 @@
 class UserRepository {
-    async findByEmail(email) {
+    async CheckUser(email) {
         // DB에서 유저 찾기
     }
 
-    async create(userDto) {
+    async UserCreate(userDto) {
         // DB에 유저 생성
     }
 }
