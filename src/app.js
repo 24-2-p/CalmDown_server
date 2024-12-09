@@ -14,7 +14,7 @@ dotenv.config();
 // require('dotenv').config();
 
 const app = express();
-const port = process.env.PORT || 60002;
+const port = process.env.PORT || 3000;
 
 app.use(cors()); // cors 방식 허용
 app.use(express.static('public')); // 정적파일 접근
@@ -76,3 +76,4 @@ app.listen(port,async () => {
 
     await testConnection();
 })
+export default app;

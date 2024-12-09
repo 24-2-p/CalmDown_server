@@ -1,11 +1,38 @@
-// class UserDto {
-//     constructor(id, email, name, mbti, techStack) {
-//         this.id = id;
-//         this.email = email;
-//         this.name = name;
-//         this.mbti = mbti;
-//         this.techStack = techStack;
-//     }
-// }
-//
-// module.exports = UserDto;
+class SignUpRequestDto {
+    constructor(data) {
+        this.email = data.email;
+        this.password = data.password;
+        this.name = data.name;
+    }
+}
+
+class SignUpResponseDto {
+    constructor(userId, email , name) {
+        this.success = true;
+        this.message = "회원가입이 완료되었습니다";
+        this.data = {
+            userId,
+            email ,
+            name
+        };
+    }
+}
+export class LoginRequestDto {
+    constructor(data) {
+        this.email = data.email;
+        this.password = data.password;
+    }
+}
+
+export class LoginResponseDto {
+    constructor(userId, email, name) {
+        this.success = true;
+        this.message = "로그인이 성공했습니다";
+        this.data = {
+            userId,
+            email,
+            name
+        };
+    }
+}
+export { SignUpRequestDto, SignUpResponseDto };
