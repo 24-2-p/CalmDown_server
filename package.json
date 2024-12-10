@@ -7,6 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/app.js",
+    "swagger-autogen": "node ./swagger.js",
     "dev": "nodemon -e js,json,prisma --exec \"prisma generate && node src/app.js"
   },
   "keywords": [],
@@ -22,6 +23,7 @@
     "mysql2": "^3.11.5",
     "prisma": "^5.22.0",
     "swagger-autogen": "^2.23.7",
+    "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {

@@ -4,7 +4,9 @@ import cors from 'cors';
 import swaggerAutogen from 'swagger-autogen';
 import swaggerUiExpress from 'swagger-ui-express';
 import userRouter from './Routes/userRouter.js';
-import { testConnection } from './db.config.js' ;
+import { testConnection } from './db.config.js';
+import swaggerJsdoc from 'swagger-jsdoc';  // 추가해야 할 import
+
 
 dotenv.config();
 
@@ -24,42 +26,60 @@ app.use(express.urlencoded({ extended: true })); //단순 객체 문자열 형�
 app.use('/users', userRouter);
 
 /****************스웨거 설정 *************/
- app.use(
-     "/docs",
-     swaggerUiExpress.serve,
-     swaggerUiExpress.setup({}, {
-         swaggerOptions: {
-             url: "/openapi.json",
-         },
-     })
- );
- app.get("/openapi.json", async (req, res, next) => {
-     // #swagger.ignore = true
-     const options = {
-         openapi: "3.0.0",
-         disableLogs: true,
-         writeOutputFile: false,
-     };
+// app.use(
+//     "/docs",
+//     swaggerUiExpress.serve,
+//     swaggerUiExpress.setup(null, {
+//         swaggerOptions: {
+//             url: "/openapi.json",
+//         },
+//     })
+// );
 
-    
-     const outputFile = "/dev/null"; // 파일 출력은 사용하지 않습니다.
-     const routes = ["./src/app.js"];
-     const doc = {
-         info: {
-             title: "캄다운 팀매칭 서비스",
-             description: "캄다운 프로젝트 팀원 매칭 서비스",
-         },
-         host: "localhost:3000",
-     };
+const serverUrl =  
+     process.env.SERVER_ENV === "department"
+         ? "http://ceprj.gachon.ac.kr:60002" // 학과 서버
+         : "http://localhost:3000"; // 로컬 서버
+         console.log("현재 SERVER_ENV 값:", process.env.SERVER_ENV);
+         console.log("선택된 serverUrl:", serverUrl);
 
-     const result = await swaggerAutogen(options)(outputFile, routes, doc);
-     res.json(result ? result.data : null);
- });
- /****************스웨거 설정 *************/
+    const swaggerOptions = {
+        definition: {
+            openapi: '3.0.0',  // 이 부분이 중요합니다!
+            info: {
+                title: "캄다운 팀매칭 서비스",
+                description: "캄다운 프로젝트 팀원 매칭 서비스",
+                version: "1.0.0"
+            },
+            servers: [
+                {
+                    url: `${serverUrl}`, // 동적으로 선택된 서버 URL
+                description:
+                    process.env.SERVER_ENV === "department"
+                        ? "학과 서버 (Department Server)"
+                        : "로컬 서버 (Local Server)",
+                }
+            ]
+        },
+        apis: ['./src/Routes/*.js']  // 라우터 파일들의 경로
+    };
+
+// Swagger 스펙 생성
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+
+// Swagger UI 설정
+app.use('/docs', swaggerUiExpress.serve, swaggerUiExpress.setup(swaggerSpec, { explorer: true }));
+
+// OpenAPI 스펙을 JSON으로 제공
+app.get('/openapi.json', (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swaggerSpec);
+});
+/****************스웨거 설정 *************/
 
 app.get('/', (req, res) => {
     res.send('Hello World!')
-})
+});
 
 // DB 연결 테스트 라우트
 app.get('/test-db', async (req, res) => {
@@ -71,9 +91,10 @@ app.get('/test-db', async (req, res) => {
     }
 });
 
-app.listen(port,async () => {
+app.listen(port, async () => {
     console.log(`Example app listening on port ${port}`);
 
     await testConnection();
-})
+});
+
 export default app;
