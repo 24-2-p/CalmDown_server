@@ -1,8 +1,11 @@
 // src/Controllers/userController.js
-import {  SignUpRequestDto, SignUpResponseDto,
-    LoginRequestDto, LoginResponseDto  } from '../Dtos/userDto.js';
-import { createUser , verifyUser  } from '../Services/userService.js';
+import {
+    SignUpRequestDto, SignUpResponseDto,
+    LoginRequestDto, LoginResponseDto, profileToUser
+} from '../Dtos/userDto.js';
+import {createUser, myProfile, verifyUser} from '../Services/userService.js';
 import bcrypt from 'bcrypt';
+import {StatusCodes} from "http-status-codes";
 
 export const signup = async (req, res) => {
     try {
@@ -27,6 +30,7 @@ export const signup = async (req, res) => {
             message: error.message
         });
     }
+
 };
 
 export const login = async (req, res) => {
@@ -55,4 +59,12 @@ export const login = async (req, res) => {
             message: error.message
         });
     }
+};
+
+
+// 나의 정보 출력 기능
+export const handlerMyProfileInfo = async (req,res) =>{
+    const myInfo = await myProfile(profileToUser(req.params));
+
+    res.status(StatusCodes.OK).success(myInfo);
 };
