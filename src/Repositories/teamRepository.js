@@ -56,3 +56,31 @@ export const getCommentsInfo = async(commentsId)=>{
         conn.release();
     }
 }
+
+
+// 팀 게시판 댓글 목록 반환
+export const getTalkList = async(teamId)=>{
+    const conn = await pool.getConnection();
+
+    try{
+        const [results] = await conn.query(
+            `select 
+                u.name as name, 
+                c.content as content,
+                c.created_at as created_at
+            from
+                comments c
+            join posts p
+            on c.post_id = p.id
+            join users u
+            on c.user_id = u.id
+            where p.team_id = ${teamId};`
+        )
+
+        return results;
+    }catch (err){
+        throw new Error(`오류 발생함 파라미터 확인바람 (${err})`)
+    }finally {
+        conn.release();
+    }
+}
