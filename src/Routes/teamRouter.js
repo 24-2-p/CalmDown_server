@@ -153,7 +153,7 @@ router.get("/:teamId/users/:userId/profile", handlerTMProfile);
  *         description: 유저 ID
  *     responses:
  *       200:
- *         description: 댓글 조회 성공
+ *         description: 팀원 프로필 조회 성공
  *         content:
  *           application/json:
  *             schema:
@@ -173,6 +173,8 @@ router.get("/:teamId/users/:userId/profile", handlerTMProfile);
  *                          type: array
  *                          items:
  *                              type: string
+ *                      position:
+ *                          type: string
  */
 
 /**********스웨거*************/

@@ -43,3 +43,12 @@ export const profileToUser = async (params) => {
         userId: params.userId
     };
 }
+
+// 내 정보 수정 요청 DTO
+export const modifyToUser = async (body, params) =>{
+    return {
+        userId: params.userId,
+        position: body.position,
+        skill: body.skill,
+    };
+}
