@@ -36,3 +36,10 @@ export class LoginResponseDto {
     }
 }
 export { SignUpRequestDto, SignUpResponseDto };
+
+// 나의 정보 요청 DTO
+export const profileToUser = async (params) => {
+    return {
+        userId: params.userId
+    };
+}

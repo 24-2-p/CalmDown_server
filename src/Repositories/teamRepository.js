@@ -86,7 +86,8 @@ export const getTalkList = async(teamId)=>{
 }
 
 
-export const getTeamMember = async(teamId, userId)=>{
+// 사용자의 정보 반환
+export const getUserInfo = async(userId)=>{
     const conn = await pool.getConnection();
 
     try{

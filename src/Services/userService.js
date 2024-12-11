@@ -1,6 +1,8 @@
 // src/Services/userService.js
 import { createUserRepo , findUserByEmail  } from '../Repositories/userRepository.js';
 import bcrypt from 'bcrypt';
+import {responseFromUserProfile} from "../Dtos/teamDTO.js";
+import {getUserInfo} from "../Repositories/teamRepository.js";
 
 export const createUser = async (userData) => {
     try {
@@ -26,3 +28,11 @@ export const verifyUser = async (loginData) => {
         throw error;
     }
 };
+
+// 내 프로필 조회기능
+export const myProfile = async (data)=>{
+    const resolvedData = await data;
+    const user = await getUserInfo(resolvedData.userId);
+
+    return responseFromUserProfile(user);
+}
