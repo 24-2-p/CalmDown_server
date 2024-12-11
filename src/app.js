@@ -6,14 +6,14 @@ import swaggerUiExpress from 'swagger-ui-express';
 import userRouter from './Routes/userRouter.js';
 import { testConnection } from './db.config.js';
 import swaggerJsdoc from 'swagger-jsdoc';  // 추가해야 할 import
+import matchingRouter from './Routes/matchingRouter.js';
 
 
 dotenv.config();
 
 
-// const cors = require('cors');
-// const userRoutes = require('./Routes/userRouter');
-// require('dotenv').config();
+
+
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -24,6 +24,7 @@ app.use(express.json()); // 요청의 본문 json으로 해석
 app.use(express.urlencoded({ extended: true })); //단순 객체 문자열 형태로 본문 데이터 해석
 
 app.use('/users', userRouter);
+app.use('/matching', matchingRouter);
 
 /****************스웨거 설정 *************/
 // app.use(
