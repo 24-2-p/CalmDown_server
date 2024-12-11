@@ -1,9 +1,9 @@
 // src/Controllers/userController.js
 import {
     SignUpRequestDto, SignUpResponseDto,
-    LoginRequestDto, LoginResponseDto, profileToUser
+    LoginRequestDto, LoginResponseDto, profileToUser, modifyToUser
 } from '../Dtos/userDto.js';
-import {createUser, myProfile, verifyUser} from '../Services/userService.js';
+import {createUser, myProfile, userInfoModify, verifyUser} from '../Services/userService.js';
 import bcrypt from 'bcrypt';
 import {StatusCodes} from "http-status-codes";
 
@@ -68,3 +68,9 @@ export const handlerMyProfileInfo = async (req,res) =>{
 
     res.status(StatusCodes.OK).success(myInfo);
 };
+
+// 나의 역활군 수정 기능
+export const handlerMyInfoModify = async (req,res)=>{
+    const result = await userInfoModify(modifyToUser(req.body, req.params));
+    res.status(StatusCodes.OK).success(result);
+}
