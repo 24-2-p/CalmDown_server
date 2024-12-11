@@ -147,7 +147,7 @@ router.get('/:userId/profile',handlerMyProfileInfo);
  *                          type: string
  */
 
-//나의 역할군 수정 기능
+//나의 정보 수정 기능
 router.patch('/:userId/modify', handlerMyInfoModify);
 /**
  * @swagger
