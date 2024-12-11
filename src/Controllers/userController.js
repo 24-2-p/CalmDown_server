@@ -27,6 +27,7 @@ export const signup = async (req, res) => {
             message: error.message
         });
     }
+
 };
 
 export const login = async (req, res) => {
