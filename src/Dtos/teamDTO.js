@@ -15,3 +15,18 @@ export const responseFromPosts = (data) =>{
         createdAt: data.created_at,
     }
 }
+
+// 팀 게시판 댓글 불러오기 요청 DTO
+export const teamIdToPosts = (params) =>{
+    return{
+        teamId:params.teamId
+    }
+}
+
+//팀 게시판 댓글 불러오기 전송 DTO
+export const responseFromAllPosts = (data) =>{
+    return{
+        content: data
+    }
+}
+

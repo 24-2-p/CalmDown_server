@@ -1,5 +1,5 @@
-import {responseFromPosts} from "../Dtos/teamDTO.js";
-import {addTalk, getCommentsInfo} from "../Repositories/teamRepository.js";
+import {responseFromAllPosts, responseFromPosts} from "../Dtos/teamDTO.js";
+import {addTalk, getCommentsInfo, getTalkList} from "../Repositories/teamRepository.js";
 import {TeamNotFoundError} from "../errors.js";
 
 
@@ -18,4 +18,11 @@ export const teamTalkContentAdd = async (data) => {
 
     const [content] = await getCommentsInfo(commentsId);
     return responseFromPosts(content);
+}
+
+// 팀 게시판 댓글 불러오기
+export const teamTalkList = async (data) => {
+    const talkList = await getTalkList(data.teamId);
+
+    return responseFromAllPosts(talkList);
 }
