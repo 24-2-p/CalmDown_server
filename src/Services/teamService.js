@@ -1,5 +1,5 @@
-import {responseFromAllPosts, responseFromPosts} from "../Dtos/teamDTO.js";
-import {addTalk, getCommentsInfo, getTalkList} from "../Repositories/teamRepository.js";
+import {responseFromAllPosts, responseFromPosts, responseUserProfile} from "../Dtos/teamDTO.js";
+import {addTalk, getCommentsInfo, getTalkList, getTeamMember} from "../Repositories/teamRepository.js";
 import {TeamNotFoundError} from "../errors.js";
 
 
@@ -25,4 +25,11 @@ export const teamTalkList = async (data) => {
     const talkList = await getTalkList(data.teamId);
 
     return responseFromAllPosts(talkList);
+}
+
+// 팀원 프로필 조회 기능
+export const teamMemberProfile = async(data) =>{
+    const teamMemberInfo = await getTeamMember(data.teamId, data.userId);
+
+    return responseUserProfile(teamMemberInfo);
 }

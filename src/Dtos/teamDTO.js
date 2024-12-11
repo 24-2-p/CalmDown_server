@@ -30,3 +30,23 @@ export const responseFromAllPosts = (data) =>{
     }
 }
 
+// 팀원 프로필 조회 요청 DTO
+export const tmToProfile = (data) =>{
+    return{
+        teamId: data.teamId,
+        userId: data.userId
+    }
+}
+
+//팀원 프로필 조회 전송 DTO
+export const responseUserProfile = (data) =>{
+    const skillList = data.skill.map(item => item.tech_name);
+
+    return{
+        name : data.userInfo[0].name,
+        email: data.userInfo[0].email,
+        skill: skillList,
+        position: data.userInfo[0].position
+    };
+}
+

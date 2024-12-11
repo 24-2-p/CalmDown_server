@@ -1,5 +1,5 @@
 import express from 'express';
-import {handlerTeamPosts, handlerTeamPostsAdd} from "../Controllers/teamPostsController.js";
+import {handlerTeamPosts, handlerTeamPostsAdd, handlerTMProfile} from "../Controllers/teamController.js";
 
 const router = express.Router();
 
@@ -10,7 +10,8 @@ router.post("/:teamId/users/:userId/posts/write", handlerTeamPostsAdd);
 //팀 게시판 대화내용 전체 조회
 router.get("/:teamId/posts", handlerTeamPosts);
 
-
+// 팀원 프로필 조회 기능
+router.get("/:teamId/users/:userId/profile", handlerTMProfile);
 
 /**
  * @swagger
@@ -118,15 +119,54 @@ router.get("/:teamId/posts", handlerTeamPosts);
  *                         properties:
  *                           name:
  *                             type: string
- *                             description: 댓글 작성자
  *                           content:
  *                             type: string
- *                             description: 댓글 내용
  *                           createdAt:
  *                             type: string
  *                             format: date-time
- *                             description: 댓글 작성 시간
  */
 
+/**
+ * @swagger
+ * /teams/{teamId}/users/{userId}/profile:
+ *   get:
+ *     summary: 팀원 프로필 조회 API
+ *     tags: [Teams]
+ *     parameters:
+ *       - in: path
+ *         name: teamId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: 팀 ID
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: 유저 ID
+ *     responses:
+ *       200:
+ *         description: 댓글 조회 성공
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 resultType:
+ *                   type: string
+ *                   example: SUCCESS
+ *                 success:
+ *                   type: object
+ *                   properties:
+ *                      name:
+ *                          type: string
+ *                      email:
+ *                          type: string
+ *                      skill:
+ *                          type: array
+ *                          items:
+ *                              type: string
+ */
 
 export default router;
