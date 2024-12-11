@@ -84,3 +84,24 @@ export const getTalkList = async(teamId)=>{
         conn.release();
     }
 }
+
+
+export const getTeamMember = async(teamId, userId)=>{
+    const conn = await pool.getConnection();
+
+    try{
+        const [userInfo] = await conn.query(
+            `select email, name, position from users where id= ${userId}; `
+        )
+
+        const [skill] = await conn.query(
+            `select tech_name from user_tech_stacks where user_id= ${userId}; `
+        )
+
+        return {userInfo, skill};
+    }catch (err){
+        throw new Error(`오류 발생 파라미터 확인바람 (${err})`)
+    }finally {
+        conn.release();
+    }
+}
