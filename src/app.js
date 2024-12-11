@@ -5,7 +5,7 @@ import swaggerAutogen from 'swagger-autogen';
 import swaggerUiExpress from 'swagger-ui-express';
 import userRouter from './Routes/userRouter.js';
 import { testConnection } from './db.config.js' ;
-import teamPostsRouter from './Routes/teamPostsRouter.js';
+import teamPostsRouter from './Routes/teamRouter.js';
 import swaggerJsdoc from 'swagger-jsdoc';  // 추가해야 할 import
 
 dotenv.config();

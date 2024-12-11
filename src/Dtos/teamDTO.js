@@ -39,7 +39,7 @@ export const tmToProfile = (data) =>{
 }
 
 //팀원 프로필 조회 전송 DTO
-export const responseUserProfile = (data) =>{
+export const responseFromUserProfile = (data) =>{
     const skillList = data.skill.map(item => item.tech_name);
 
     return{

@@ -13,6 +13,10 @@ router.get("/:teamId/posts", handlerTeamPosts);
 // 팀원 프로필 조회 기능
 router.get("/:teamId/users/:userId/profile", handlerTMProfile);
 
+
+
+/**********스웨거*************/
+//팀 게시판 댓글 추가기능
 /**
  * @swagger
  * /teams/{teamId}/users/{userId}/posts/write:
@@ -85,6 +89,7 @@ router.get("/:teamId/users/:userId/profile", handlerTMProfile);
  *                       type: object
  */
 
+// 팀 게시판 대화내용 전체 조회
 /**
  * @swagger
  * /teams/{teamId}/posts:
@@ -126,6 +131,7 @@ router.get("/:teamId/users/:userId/profile", handlerTMProfile);
  *                             format: date-time
  */
 
+//팀원 프로필 조회 기능
 /**
  * @swagger
  * /teams/{teamId}/users/{userId}/profile:
@@ -168,5 +174,9 @@ router.get("/:teamId/users/:userId/profile", handlerTMProfile);
  *                          items:
  *                              type: string
  */
+
+/**********스웨거*************/
+
+
 
 export default router;
