@@ -1,6 +1,11 @@
 // src/Routes/userRouter.js
 import express from 'express';
-import {signup, login, handlerMyProfileInfo} from '../Controllers/userController.js';
+import {
+    signup,
+    login,
+    handlerMyProfileInfo,
+    handlerMyInfoModify
+} from '../Controllers/userController.js';
 
 const router = express.Router();
 
@@ -101,7 +106,105 @@ router.post('/signup', signup);
  */
 router.post('/login', login);
 
+//나의 정보 출력 기능
 router.get('/:userId/profile',handlerMyProfileInfo);
+/**
+ * @swagger
+ * /users/{userId}/profile:
+ *   get:
+ *     summary: 나의 프로필 조회 API
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: 유저 ID
+ *     responses:
+ *       200:
+ *         description: 프로필 조회 성공
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 resultType:
+ *                   type: string
+ *                   example: SUCCESS
+ *                 success:
+ *                   type: object
+ *                   properties:
+ *                      name:
+ *                          type: string
+ *                      email:
+ *                          type: string
+ *                      skill:
+ *                          type: array
+ *                          items:
+ *                              type: string
+ *                      position:
+ *                          type: string
+ */
+
+//나의 정보 수정 기능
+router.patch('/:userId/modify', handlerMyInfoModify);
+/**
+ * @swagger
+ * /users/{userId}/modify:
+ *   patch:
+ *     summary: 사용자 프로필 수정 API
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: 유저 ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               position:
+ *                 type: string
+ *               skill:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *     responses:
+ *       200:
+ *         description: 프로필 수정 성공
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 resultType:
+ *                   type: string
+ *                   example: SUCCESS
+ *                 error:
+ *                   type: object
+ *                   nullable: true
+ *                   example: null
+ *                 success:
+ *                   type: object
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     skill:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                     position:
+ *                       type: string
+ */
+
 
 
 export default router;
