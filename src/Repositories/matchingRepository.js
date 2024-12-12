@@ -246,3 +246,24 @@ class MatchingRepository {
 }
 
 export default new MatchingRepository();
+
+// 사용자 이메일 유효성 검사
+export const checkUser = async (data)=>{
+    const conn = await pool.getConnection();
+
+    try{
+        const [result] = await conn.query(
+            `select email from USERS where email = '${data.email}';`
+        );
+        let check = false
+
+        if(result.length){
+            check = true;
+        }
+        return {result, check};
+    }catch (err){
+        throw new Error(`오류 발생 파라미터 확인바람 (${err})`)
+    }finally {
+        conn.release();
+    }
+}

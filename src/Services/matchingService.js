@@ -1,7 +1,8 @@
 // matchingService.js
 import { pool } from '../db.config.js';
-import matchingRepository from '../Repositories/matchingRepository.js';
-import { MatchingStatusDto, TeamMemberDto, MatchingResponseDto } from '../Dtos/matchingDto.js';
+import matchingRepository, {checkUser} from '../Repositories/matchingRepository.js';
+import {MatchingStatusDto, TeamMemberDto, MatchingResponseDto, responseFromUserCheck} from '../Dtos/matchingDto.js';
+import {UserNotFoundError} from "../errors.js";
 
 class MatchingService {
     async startMatching(matchingDto) {
@@ -203,3 +204,15 @@ class MatchingService {
 }
 
 export default new MatchingService();
+
+// 사용자 이메일 유효성 검사
+export const userCheck = async (data)=>{
+    const result = await checkUser(data);
+
+    if (result.check === false){
+        throw new UserNotFoundError('이메일과 일치하는 사용자가 존재하지 않음',data.email)
+    }
+
+    console.log(result);
+    return responseFromUserCheck(result);
+}
