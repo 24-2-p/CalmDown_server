@@ -6,7 +6,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /match/start:
+ * /matching/start:
  *   post:
  *     summary: 팀 매칭 시작
  *     description: |
@@ -95,7 +95,7 @@ router.post('/start', matchingController.startMatching);
 
 /**
  * @swagger
- * /match/status/{teamId}:
+ * /matching/status/{teamId}:
  *   get:
  *     summary: 매칭 상태 확인
  *     tags: [Matching]
@@ -150,7 +150,7 @@ router.get('/status/:teamId', matchingController.getMatchingStatus);
 
 /**
  * @swagger
- * /match/cancel/{teamId}:
+ * /matching/cancel/{teamId}:
 *   post:
  *     summary: 매칭 취소
  *     tags: [Matching]
@@ -182,7 +182,7 @@ router.post('/cancel/:teamId', matchingController.cancelMatching);
 router.post('/users/check', handlerUserCheck);
 /**
  * @swagger
- * /match/users/check:
+ * /matching/users/check:
  *   post:
  *     summary: 이메일 유효성 검사 API
  *     tags: [Matching]
