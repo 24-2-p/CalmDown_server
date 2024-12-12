@@ -1,6 +1,6 @@
 import {StatusCodes} from "http-status-codes";
-import {teamIdToPosts, tmToProfile, writeToPosts} from "../Dtos/teamDTO.js";
-import {teamMemberProfile, teamTalkContentAdd, teamTalkList} from "../Services/teamService.js";
+import {delToPosts, teamIdToPosts, tmToProfile, writeToPosts} from "../Dtos/teamDTO.js";
+import {teamMemberProfile, teamTalkContentAdd, teamTalkDel, teamTalkList} from "../Services/teamService.js";
 
 // 팀게시판 댓글 추가기능
 export const handlerTeamPostsAdd = async (req, res) => {
@@ -18,4 +18,10 @@ export const handlerTeamPosts = async (req, res) => {
 export const handlerTMProfile = async (req, res) => {
     const profile = await teamMemberProfile(tmToProfile(req.params));
     res.status(StatusCodes.OK).success(profile);
+}
+
+//팀 게시판 삭제
+export const handlerteamPostsDel = async (req, res) => {
+    const talkDel = await teamTalkDel(delToPosts(req.params));
+    res.status(StatusCodes.OK).success(talkDel);
 }

@@ -13,21 +13,13 @@ export const addTalk = async (data) =>{
             return null;
         }
 
-        //게시물 테이블에 등록
-        const [result] = await pool.query(
-            `insert into POSTS(team_id,user_id) values( ?, ?);`,
-            [data.teamId, data.userId]
-        );
-
-        const postsId = result.insertId;
-
         // 댓글 테이블에 등록
-        const [result2] = await pool.query(
+        const [result] = await pool.query(
             `insert into COMMENTS(post_id,user_id,content) values(?,?,?);`,
-            [postsId, data.userId, data.content]
+            [data.postsId, data.userId, data.content]
         );
 
-        const commentsId = result2.insertId;
+        const commentsId = result.insertId;
 
         return commentsId;
 
@@ -40,7 +32,7 @@ export const addTalk = async (data) =>{
     }
 }
 
-// 코멘트 아이디를 통해서 코멘트 정보 가져오기 (댓글 단것 반환할때 사용)
+// 코멘트 아이디를 통해서 코멘트 정보 가져오기 (댓글 쓴 것 반환할때 사용)
 export const getCommentsInfo = async(commentsId)=>{
     const conn = await pool.getConnection();
 
@@ -59,7 +51,7 @@ export const getCommentsInfo = async(commentsId)=>{
 
 
 // 팀 게시판 댓글 목록 반환
-export const getTalkList = async(teamId)=>{
+export const getTalkList = async(postsId)=>{
     const conn = await pool.getConnection();
 
     try{
@@ -74,7 +66,7 @@ export const getTalkList = async(teamId)=>{
             on c.post_id = p.id
             join USERS u
             on c.user_id = u.id
-            where p.team_id = ${teamId};`
+            where p.id = ${postsId};`
         )
 
         return results;
@@ -101,6 +93,25 @@ export const getUserInfo = async(userId)=>{
 
         return {userInfo, skill};
     }catch (err){
+        throw new Error(`오류 발생 파라미터 확인바람 (${err})`)
+    }finally {
+        conn.release();
+    }
+}
+
+// 팀 게시판 댓글 삭제
+export const deleteTalkData = async(data)=>{
+    const conn = await pool.getConnection();
+    try{
+        const [result] = await conn.query(
+            `select * from COMMENTS where id= ${data.commentsId};`
+        )
+        await conn.query(
+            `delete from COMMENTS where post_id = ${data.postsId} and id = ${data.commentsId};`
+        )
+
+        return result;
+    }catch(err){
         throw new Error(`오류 발생 파라미터 확인바람 (${err})`)
     }finally {
         conn.release();
