@@ -74,3 +74,4 @@ export const handlerMyInfoModify = async (req,res)=>{
     const result = await userInfoModify(modifyToUser(req.body, req.params));
     res.status(StatusCodes.OK).success(result);
 }
+

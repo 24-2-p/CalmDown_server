@@ -47,7 +47,7 @@ app.use(express.json()); // 요청의 본문 json으로 해석
 app.use(express.urlencoded({ extended: true })); //단순 객체 문자열 형태로 본문 데이터 해석
 
 app.use('/users', userRouter);
-app.use('/matching', matchingRouter);
+app.use('/match', matchingRouter);
 app.use('/teams', teamPostsRouter);
 
 /****************스웨거 설정 *************/
