@@ -21,20 +21,20 @@ class MatchingService {
 
             // 사용자 정보 갱신 (position과 portfolio를 새로운 값으로 업데이트)
             await connection.query(
-                'UPDATE users SET position = ?, portfolio = ? WHERE id = ?',
+                'UPDATE USERS SET position = ?, portfolio = ? WHERE id = ?',
                 [matchingDto.position, matchingDto.portfolio, matchingDto.userId]
             );
 
             // 기술스택 전체 갱신
             await connection.query(
-                'DELETE FROM user_tech_stacks WHERE user_id = ?',
+                'DELETE FROM USER_TECH_STACKS WHERE user_id = ?',
                 [matchingDto.userId]
             );
 
             if (matchingDto.techStacks.length > 0) {
                 const techStackValues = matchingDto.techStacks.map(tech => [matchingDto.userId, tech]);
                 await connection.query(
-                    'INSERT INTO user_tech_stacks (user_id, tech_name) VALUES ?',
+                    'INSERT INTO USER_TECH_STACKS (user_id, tech_name) VALUES ?',
                     [techStackValues]
                 );
             }
@@ -54,7 +54,7 @@ class MatchingService {
                 // 각 팀원의 매칭 정보 생성
                 for (const email of matchingDto.teamEmails) {
                     const [user] = await connection.query(
-                        'SELECT id, position FROM users WHERE email = ?',
+                        'SELECT id, position FROM USERS WHERE email = ?',
                         [email]
                     );
 
@@ -81,7 +81,7 @@ class MatchingService {
                 // 팀원들을 팀에 추가
                 for (const email of matchingDto.teamEmails) {
                     const [user] = await connection.query(
-                        'SELECT id FROM users WHERE email = ?',
+                        'SELECT id FROM USERS WHERE email = ?',
                         [email]
                     );
                     await matchingRepository.addTeamMember(teamId, user[0].id, connection);

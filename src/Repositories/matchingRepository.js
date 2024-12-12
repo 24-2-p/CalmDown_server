@@ -12,15 +12,15 @@ class MatchingRepository {
     async checkExistingMatching(projectId, userId, connection) {
         const [result] = await connection.query(`
             SELECT m.id 
-            FROM matching m 
+            FROM MATCHING m 
             WHERE m.project_id = ? 
             AND m.status = 'waiting'
             AND (
                 m.representative_id = ?
                 OR EXISTS (
                     SELECT 1 
-                    FROM teams t 
-                    JOIN team_members tm ON t.id = tm.team_id 
+                    FROM TEAMS t 
+                    JOIN TEAM_MEMBERS tm ON t.id = tm.team_id 
                     WHERE t.matching_id = m.id AND tm.user_id = ?
                 )
             )`,
@@ -32,7 +32,7 @@ class MatchingRepository {
     // 새로운 매칭 정보를 생성하는 메서드
     async createMatching(userId, projectId, matchingType, connection) {
         const [result] = await connection.query(
-            `INSERT INTO matching 
+            `INSERT INTO MATCHING 
              (representative_id, project_id, matching_type, status)
              VALUES (?, ?, ?, 'waiting')`,
             [userId, projectId, matchingType]
@@ -43,7 +43,7 @@ class MatchingRepository {
     // 새로운 팀을 생성하는 메서드
     async createTeam(matchingId, connection) {
         const [result] = await connection.query(
-            'INSERT INTO teams (matching_id) VALUES (?)',
+            'INSERT INTO TEAMS (matching_id) VALUES (?)',
             [matchingId]
         );
         return result.insertId;
@@ -52,7 +52,7 @@ class MatchingRepository {
     // 팀에 새로운 멤버를 추가하는 메서드
     async addTeamMember(teamId, userId, connection) {
         await connection.query(
-            'INSERT INTO team_members (team_id, user_id) VALUES (?, ?)',
+            'INSERT INTO TEAM_MEMBERS (team_id, user_id) VALUES (?, ?)',
             [teamId, userId]
         );
     }
@@ -61,7 +61,7 @@ class MatchingRepository {
     async updateUserTechStacks(userId, techStacks, connection) {
         // 기존 기술스택 삭제
         await connection.query(
-            'DELETE FROM user_tech_stacks WHERE user_id = ?',
+            'DELETE FROM USER_TECH_STACKS WHERE user_id = ?',
             [userId]
         );
 
@@ -69,7 +69,7 @@ class MatchingRepository {
         if (techStacks.length > 0) {
             const values = techStacks.map(tech => [userId, tech]);
             await connection.query(
-                'INSERT INTO user_tech_stacks (user_id, tech_name) VALUES ?',
+                'INSERT INTO USER_TECH_STACKS (user_id, tech_name) VALUES ?',
                 [values]
             );
         }
@@ -84,10 +84,10 @@ class MatchingRepository {
                 COUNT(DISTINCT tm.id) as total_members,
                 SUM(CASE WHEN u.position = 'frontend' THEN 1 ELSE 0 END) as frontend_count,
                 SUM(CASE WHEN u.position = 'backend' THEN 1 ELSE 0 END) as backend_count
-            FROM teams t
-            JOIN matching m ON t.matching_id = m.id
-            JOIN team_members tm ON t.id = tm.team_id
-            JOIN users u ON tm.user_id = u.id
+            FROM TEAMS t
+            JOIN MATCHING m ON t.matching_id = m.id
+            JOIN TEAM_MEMBERS tm ON t.id = tm.team_id
+            JOIN USERS u ON tm.user_id = u.id
             WHERE t.id = ?
             GROUP BY t.id, m.status, m.id`,
             [teamId]
@@ -103,9 +103,9 @@ class MatchingRepository {
                 u.position,
                 u.portfolio,
                 GROUP_CONCAT(uts.tech_name) as tech_stacks
-            FROM team_members tm
-            JOIN users u ON tm.user_id = u.id
-            LEFT JOIN user_tech_stacks uts ON u.id = uts.user_id
+            FROM TEAM_MEMBERS tm
+            JOIN USERS u ON tm.user_id = u.id
+            LEFT JOIN USER_TECH_STACKS uts ON u.id = uts.user_id
             WHERE tm.team_id = ?
             GROUP BY u.id, u.name, u.position, u.portfolio`,
             [teamId]
@@ -119,7 +119,7 @@ class MatchingRepository {
     // 매칭 상태를 업데이트하는 메서드
     async updateMatchingStatus(matchingId, status, connection) {
         await connection.query(
-            'UPDATE matching SET status = ? WHERE id = ?',
+            'UPDATE MATCHING SET status = ? WHERE id = ?',
             [status, matchingId]
         );
     }
@@ -129,14 +129,14 @@ class MatchingRepository {
          // 팀의 가장 낮은 user_id를 가진 멤버를 찾아 대표자로 설정
     const [teamLeader] = await connection.query(`
         SELECT MIN(user_id) as representative_id
-        FROM team_members
+        FROM TEAM_MEMBERS
         WHERE team_id = ?`,
         [teamId]
     );
 
     // 팀 게시판 생성 (한 팀당 하나의 게시판)
     await connection.query(
-        'INSERT INTO posts (team_id, user_id) VALUES (?, ?)',
+        'INSERT INTO POSTS (team_id, user_id) VALUES (?, ?)',
         [teamId, teamLeader[0].representative_id]
     );
 }
@@ -145,7 +145,7 @@ class MatchingRepository {
     async cancelMatching(teamId, connection) {
          // 팀 정보 조회
     const [teamInfo] = await connection.query(
-        'SELECT matching_id FROM teams WHERE id = ?',
+        'SELECT matching_id FROM TEAMS WHERE id = ?',
         [teamId]
     );
 
@@ -155,19 +155,19 @@ class MatchingRepository {
 
     // 팀 멤버 삭제
     await connection.query(
-        'DELETE FROM team_members WHERE team_id = ?',
+        'DELETE FROM TEAM_MEMBERS WHERE team_id = ?',
         [teamId]
     );
 
     // 팀 삭제
     await connection.query(
-        'DELETE FROM teams WHERE id = ?',
+        'DELETE FROM TEAMS WHERE id = ?',
         [teamId]
     );
 
     // 매칭 삭제
     await connection.query(
-        'DELETE FROM matching WHERE id = ?',
+        'DELETE FROM MATCHING WHERE id = ?',
         [teamInfo[0].matching_id]
     );
 }
@@ -180,10 +180,10 @@ class MatchingRepository {
             COUNT(DISTINCT tm.user_id) as total_members,
             SUM(CASE WHEN u.position = 'frontend' THEN 1 ELSE 0 END) as frontend_count,
             SUM(CASE WHEN u.position = 'backend' THEN 1 ELSE 0 END) as backend_count
-        FROM teams t
-        JOIN matching m ON t.matching_id = m.id
-        JOIN team_members tm ON t.id = tm.team_id
-        JOIN users u ON tm.user_id = u.id
+        FROM TEAMS t
+        JOIN MATCHING m ON t.matching_id = m.id
+        JOIN TEAM_MEMBERS tm ON t.id = tm.team_id
+        JOIN USERS u ON tm.user_id = u.id
         WHERE t.id = ?
         GROUP BY m.id, m.status`,
             [teamId]
@@ -201,10 +201,10 @@ class MatchingRepository {
             COUNT(DISTINCT tm.user_id) as member_count,
             SUM(CASE WHEN u.position = 'frontend' THEN 1 ELSE 0 END) as frontend_count,
             SUM(CASE WHEN u.position = 'backend' THEN 1 ELSE 0 END) as backend_count
-        FROM teams t
-        JOIN matching m ON t.matching_id = m.id
-        JOIN team_members tm ON t.id = tm.team_id
-        JOIN users u ON tm.user_id = u.id
+        FROM TEAMS t
+        JOIN MATCHING m ON t.matching_id = m.id
+        JOIN TEAM_MEMBERS tm ON t.id = tm.team_id
+        JOIN USERS u ON tm.user_id = u.id
         WHERE m.status = 'waiting'
         GROUP BY t.id
         HAVING 
@@ -229,13 +229,13 @@ class MatchingRepository {
     async updateTeamMatchingStatus(teamId, status, connection) {
         // 해당 팀의 모든 멤버의 매칭 상태를 업데이트
         await connection.query(`
-         UPDATE matching m
+         UPDATE MATCHING m
             JOIN (
                 SELECT DISTINCT m2.id
-                FROM matching m2
-                JOIN teams t ON m2.representative_id IN (
+                FROM MATCHING m2
+                JOIN TEAMS t ON m2.representative_id IN (
                     SELECT user_id 
-                    FROM team_members 
+                    FROM TEAM_MEMBERS 
                     WHERE team_id = ?
                 )
             ) matched ON matched.id = m.id
