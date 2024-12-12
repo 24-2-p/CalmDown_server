@@ -7,7 +7,7 @@ export const addTalk = async (data) =>{
     try{
         // 해당 팀이 존재하는지 확인
         const [confirm] = await pool.query(
-            `select * from teams where id = ${data.teamId} ;`
+            `select * from TEAMS where id = ${data.teamId} ;`
         )
         if(confirm.length === 0){
             return null;
@@ -15,7 +15,7 @@ export const addTalk = async (data) =>{
 
         //게시물 테이블에 등록
         const [result] = await pool.query(
-            `insert into posts(team_id,user_id) values( ?, ?);`,
+            `insert into POSTS(team_id,user_id) values( ?, ?);`,
             [data.teamId, data.userId]
         );
 
@@ -23,7 +23,7 @@ export const addTalk = async (data) =>{
 
         // 댓글 테이블에 등록
         const [result2] = await pool.query(
-            `insert into comments(post_id,user_id,content) values(?,?,?);`,
+            `insert into COMMENTS(post_id,user_id,content) values(?,?,?);`,
             [postsId, data.userId, data.content]
         );
 
@@ -46,7 +46,7 @@ export const getCommentsInfo = async(commentsId)=>{
 
     try{
         const [comment] = await conn.query(
-            `select * from comments where id= ${commentsId}`
+            `select * from COMMENTS where id= ${commentsId}`
         );
 
         return comment;
@@ -69,10 +69,10 @@ export const getTalkList = async(teamId)=>{
                 c.content as content,
                 c.created_at as created_at
             from
-                comments c
-            join posts p
+                COMMENTS c
+            join POSTS p
             on c.post_id = p.id
-            join users u
+            join USERS u
             on c.user_id = u.id
             where p.team_id = ${teamId};`
         )
@@ -92,11 +92,11 @@ export const getUserInfo = async(userId)=>{
 
     try{
         const [userInfo] = await conn.query(
-            `select email, name, position from users where id= ${userId}; `
+            `select email, name, position from USERS where id= ${userId}; `
         )
 
         const [skill] = await conn.query(
-            `select tech_name from user_tech_stacks where user_id= ${userId}; `
+            `select tech_name from USER_TECH_STACKS where user_id= ${userId}; `
         )
 
         return {userInfo, skill};
