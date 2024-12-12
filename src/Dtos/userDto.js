@@ -49,6 +49,6 @@ export const modifyToUser = async (body, params) =>{
     return {
         userId: params.userId,
         position: body.position,
-        skill: body.skill,
+        skills: body.skill,
     };
 }

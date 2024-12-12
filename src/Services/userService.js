@@ -1,5 +1,11 @@
 // src/Services/userService.js
-import {createUserRepo, findUserByEmail, userModify} from '../Repositories/userRepository.js';
+import {
+    createUserRepo,
+    findUserByEmail,
+    userPositionModify,
+    userSkillDel,
+    userSkillModify
+} from '../Repositories/userRepository.js';
 import bcrypt from 'bcrypt';
 import {responseFromUserProfile} from "../Dtos/teamDTO.js";
 import {getUserInfo} from "../Repositories/teamRepository.js";
@@ -40,7 +46,13 @@ export const myProfile = async (data)=>{
 // 내 정보 수정
 export const userInfoModify = async (data) =>{
     const resolveData = await data;
-    const userId = await userModify(resolveData);
+    const userId = await userPositionModify(resolveData);
+    await userSkillDel(resolveData.userId);
+
+    for (const skill of resolveData.skills){
+        await userSkillModify(resolveData.userId, skill);
+    }
+
     const user = await getUserInfo(userId);
     return responseFromUserProfile(user);
 }
