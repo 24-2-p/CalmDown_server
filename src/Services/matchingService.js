@@ -209,9 +209,7 @@ export default new MatchingService();
 export const userCheck = async (data)=>{
     const result = await checkUser(data);
 
-    if (result.check === false){
-        throw new UserNotFoundError('이메일과 일치하는 사용자가 존재하지 않음',data.email)
-    }
+ 
 
     console.log(result);
     return responseFromUserCheck(result);

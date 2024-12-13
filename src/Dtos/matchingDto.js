@@ -126,5 +126,7 @@ export const responseFromUserCheck = (data) =>{
     return {
         email: data.result[0].email,
         check: data.check,
+        position: data.result[0].position // position 정보 추가
+
     }
 }
