@@ -182,7 +182,7 @@ router.post('/cancel/:teamId', matchingController.cancelMatching);
 router.post('/users/check', handlerUserCheck);
 /**
  * @swagger
- * /matching/users/check:
+  * /matching/users/check:
  *   post:
  *     summary: 이메일 유효성 검사 API
  *     tags: [Matching]
@@ -196,6 +196,7 @@ router.post('/users/check', handlerUserCheck);
  *               email:
  *                 type: string
  *                 description: 확인할 이메일 주소
+ *                 example: 'test123@test.com'
  *     responses:
  *       200:
  *         description: 이메일 유효성 검사 결과
@@ -215,11 +216,16 @@ router.post('/users/check', handlerUserCheck);
  *                     email:
  *                       type: string
  *                       description: 이메일 주소
- *                       example: hong@example.com
+ *                       example: test123@test.com
  *                     check:
  *                       type: boolean
  *                       description: 이메일 존재 여부
  *                       example: true
+ *                     position:
+ *                       type: string
+ *                       description: 사용자의 포지션
+ *                       example: frontend
+ *                       string: [frontend, backend, ai, iot]
  *       400:
  *         description: 이메일 유효성 검사 실패
  *         content:

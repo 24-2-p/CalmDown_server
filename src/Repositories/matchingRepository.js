@@ -2,7 +2,7 @@
 import { pool } from '../db.config.js';
 import matchingRepository from '../Repositories/matchingRepository.js';
 import { MatchingStatusDto, TeamMemberDto, MatchingResponseDto } from '../Dtos/matchingDto.js';
-
+import { UserNotFoundError } from '../errors.js';
 // Repositories/matchingRepository.js
 
 
@@ -253,14 +253,22 @@ export const checkUser = async (data)=>{
 
     try{
         const [result] = await conn.query(
-            `select email from USERS where email = '${data.email}';`
+            `select email,position from USERS where email = ?` ,
+            [data.email]
         );
-        let check = false
-
-        if(result.length){
-            check = true;
+        if (!result.length) {
+            throw new UserNotFoundError('이메일과 일치하는 사용자가 존재하지 않음', data.email);
         }
-        return {result, check};
+        
+        if (!result[0].position) {
+            throw new Error('포지션이 설정되지 않은 사용자입니다');
+        }
+        
+        return {
+            result,
+            check: true,
+            position: result[0].position
+        };
     }catch (err){
         throw new Error(`오류 발생 파라미터 확인바람 (${err})`)
     }finally {
