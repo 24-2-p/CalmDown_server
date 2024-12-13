@@ -1,6 +1,6 @@
 // Routes/matchingRouter.js
 import express from 'express';
-import matchingController from '../Controllers/matchingController.js';
+import matchingController, {handlerUserCheck} from '../Controllers/matchingController.js';
 
 const router = express.Router();
 
@@ -177,5 +177,68 @@ router.get('/status/:teamId', matchingController.getMatchingStatus);
  *                   example: "매칭이 취소되었습니다."
  */
 router.post('/cancel/:teamId', matchingController.cancelMatching);
+
+// 매칭 전 같이할 팀원 유효성 검사
+router.post('/users/check', handlerUserCheck);
+/**
+ * @swagger
+ * /matching/users/check:
+ *   post:
+ *     summary: 이메일 유효성 검사 API
+ *     tags: [Matching]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: 확인할 이메일 주소
+ *     responses:
+ *       200:
+ *         description: 이메일 유효성 검사 결과
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 resultType:
+ *                   type: string
+ *                   example: SUCCESS
+ *                 success:
+ *                   type: object
+ *                   nullable: true
+ *                   description: 성공 정보 (성공 시 포함)
+ *                   properties:
+ *                     email:
+ *                       type: string
+ *                       description: 이메일 주소
+ *                       example: hong@example.com
+ *                     check:
+ *                       type: boolean
+ *                       description: 이메일 존재 여부
+ *                       example: true
+ *       400:
+ *         description: 이메일 유효성 검사 실패
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 resultType:
+ *                   type: string
+ *                   example: FAIL
+ *                 error:
+ *                   type: object
+ *                   properties:
+ *                     errorCode:
+ *                       type: string
+ *                     reason:
+ *                       type: string
+ *                     data:
+ *                       type: object
+ */
 
 export default router;

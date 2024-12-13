@@ -1,7 +1,8 @@
 // matchingService.js
 import { pool } from '../db.config.js';
-import matchingRepository from '../Repositories/matchingRepository.js';
-import { MatchingStatusDto, TeamMemberDto, MatchingResponseDto } from '../Dtos/matchingDto.js';
+import matchingRepository, {checkUser} from '../Repositories/matchingRepository.js';
+import {MatchingStatusDto, TeamMemberDto, MatchingResponseDto, responseFromUserCheck} from '../Dtos/matchingDto.js';
+import {UserNotFoundError} from "../errors.js";
 
 class MatchingService {
     async startMatching(matchingDto) {
@@ -21,20 +22,20 @@ class MatchingService {
 
             // 사용자 정보 갱신 (position과 portfolio를 새로운 값으로 업데이트)
             await connection.query(
-                'UPDATE users SET position = ?, portfolio = ? WHERE id = ?',
+                'UPDATE USERS SET position = ?, portfolio = ? WHERE id = ?',
                 [matchingDto.position, matchingDto.portfolio, matchingDto.userId]
             );
 
             // 기술스택 전체 갱신
             await connection.query(
-                'DELETE FROM user_tech_stacks WHERE user_id = ?',
+                'DELETE FROM USER_TECH_STACKS WHERE user_id = ?',
                 [matchingDto.userId]
             );
 
             if (matchingDto.techStacks.length > 0) {
                 const techStackValues = matchingDto.techStacks.map(tech => [matchingDto.userId, tech]);
                 await connection.query(
-                    'INSERT INTO user_tech_stacks (user_id, tech_name) VALUES ?',
+                    'INSERT INTO USER_TECH_STACKS (user_id, tech_name) VALUES ?',
                     [techStackValues]
                 );
             }
@@ -54,7 +55,7 @@ class MatchingService {
                 // 각 팀원의 매칭 정보 생성
                 for (const email of matchingDto.teamEmails) {
                     const [user] = await connection.query(
-                        'SELECT id, position FROM users WHERE email = ?',
+                        'SELECT id, position FROM USERS WHERE email = ?',
                         [email]
                     );
 
@@ -81,7 +82,7 @@ class MatchingService {
                 // 팀원들을 팀에 추가
                 for (const email of matchingDto.teamEmails) {
                     const [user] = await connection.query(
-                        'SELECT id FROM users WHERE email = ?',
+                        'SELECT id FROM USERS WHERE email = ?',
                         [email]
                     );
                     await matchingRepository.addTeamMember(teamId, user[0].id, connection);
@@ -203,3 +204,15 @@ class MatchingService {
 }
 
 export default new MatchingService();
+
+// 사용자 이메일 유효성 검사
+export const userCheck = async (data)=>{
+    const result = await checkUser(data);
+
+    if (result.check === false){
+        throw new UserNotFoundError('이메일과 일치하는 사용자가 존재하지 않음',data.email)
+    }
+
+    console.log(result);
+    return responseFromUserCheck(result);
+}

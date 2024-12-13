@@ -1,6 +1,8 @@
 // Controllers/matchingController.js
-import matchingService from '../Services/matchingService.js';
-import { MatchingRequestDto } from '../Dtos/matchingDto.js';
+import matchingService, {userCheck} from '../Services/matchingService.js';
+import {checkToUser, MatchingRequestDto} from '../Dtos/matchingDto.js';
+import {StatusCodes} from "http-status-codes";
+
 
 class MatchingController {
     // 매칭 시작 요청 처리
@@ -78,3 +80,10 @@ class MatchingController {
 }
 
 export default new MatchingController();
+
+
+//사용자 이메일 유효성 검사
+export const handlerUserCheck = async (req, res) => {
+    const result = await userCheck(checkToUser(req.body,req.params));
+    res.status(StatusCodes.OK).success(result);
+}

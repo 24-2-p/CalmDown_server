@@ -1,19 +1,20 @@
 import {
-    responseFromAllPosts,
+    responseFromAllPosts, responseFromDeleteComments,
     responseFromPosts,
     responseFromUserProfile
 } from "../Dtos/teamDTO.js";
-import {addTalk, getCommentsInfo, getTalkList, getUserInfo} from "../Repositories/teamRepository.js";
+import {addTalk, deleteTalkData, getCommentsInfo, getTalkList, getUserInfo} from "../Repositories/teamRepository.js";
 import {TeamNotFoundError} from "../errors.js";
 
 
 // 팀 게시판 대화 등록
 export const teamTalkContentAdd = async (data) => {
-
+    
     const commentsId  = await addTalk({
         teamId : data.teamId,
         userId : data.userId,
-        content: data.content
+        content: data.content,
+        postsId: data.postsId
     });
 
     if(commentsId === null){
@@ -36,4 +37,10 @@ export const teamMemberProfile = async(data) =>{
     const teamMemberInfo = await getUserInfo(data.userId);
 
     return responseFromUserProfile(teamMemberInfo);
+}
+
+// 팀 게시판 댓글 삭제하기
+export const teamTalkDel = async (data) => {
+    const result = await deleteTalkData(data);
+    return responseFromDeleteComments(result);
 }

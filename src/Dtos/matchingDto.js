@@ -112,3 +112,19 @@ export class MatchingResponseDto {
         }
     }
 }
+
+// 사용자 이메일 유효성 검사 요청 DTO
+export const checkToUser = (body,params) =>{
+    return {
+        userId: params.userId,
+        email: body.email,
+    }
+}
+
+// 사용자 이메일 유효성 검사 응답 DTO
+export const responseFromUserCheck = (data) =>{
+    return {
+        email: data.result[0].email,
+        check: data.check,
+    }
+}

@@ -7,27 +7,19 @@ export const addTalk = async (data) =>{
     try{
         // 해당 팀이 존재하는지 확인
         const [confirm] = await pool.query(
-            `select * from teams where id = ${data.teamId} ;`
+            `select * from TEAMS where id = ${data.teamId} ;`
         )
         if(confirm.length === 0){
             return null;
         }
 
-        //게시물 테이블에 등록
-        const [result] = await pool.query(
-            `insert into posts(team_id,user_id) values( ?, ?);`,
-            [data.teamId, data.userId]
-        );
-
-        const postsId = result.insertId;
-
         // 댓글 테이블에 등록
-        const [result2] = await pool.query(
-            `insert into comments(post_id,user_id,content) values(?,?,?);`,
-            [postsId, data.userId, data.content]
+        const [result] = await pool.query(
+            `insert into COMMENTS(post_id,user_id,content) values(?,?,?);`,
+            [data.postsId, data.userId, data.content]
         );
 
-        const commentsId = result2.insertId;
+        const commentsId = result.insertId;
 
         return commentsId;
 
@@ -40,13 +32,13 @@ export const addTalk = async (data) =>{
     }
 }
 
-// 코멘트 아이디를 통해서 코멘트 정보 가져오기 (댓글 단것 반환할때 사용)
+// 코멘트 아이디를 통해서 코멘트 정보 가져오기 (댓글 쓴 것 반환할때 사용)
 export const getCommentsInfo = async(commentsId)=>{
     const conn = await pool.getConnection();
 
     try{
         const [comment] = await conn.query(
-            `select * from comments where id= ${commentsId}`
+            `select * from COMMENTS where id= ${commentsId}`
         );
 
         return comment;
@@ -59,7 +51,7 @@ export const getCommentsInfo = async(commentsId)=>{
 
 
 // 팀 게시판 댓글 목록 반환
-export const getTalkList = async(teamId)=>{
+export const getTalkList = async(postsId)=>{
     const conn = await pool.getConnection();
 
     try{
@@ -69,12 +61,12 @@ export const getTalkList = async(teamId)=>{
                 c.content as content,
                 c.created_at as created_at
             from
-                comments c
-            join posts p
+                COMMENTS c
+            join POSTS p
             on c.post_id = p.id
-            join users u
+            join USERS u
             on c.user_id = u.id
-            where p.team_id = ${teamId};`
+            where p.id = ${postsId};`
         )
 
         return results;
@@ -92,15 +84,34 @@ export const getUserInfo = async(userId)=>{
 
     try{
         const [userInfo] = await conn.query(
-            `select email, name, position from users where id= ${userId}; `
+            `select email, name, position from USERS where id= ${userId}; `
         )
 
         const [skill] = await conn.query(
-            `select tech_name from user_tech_stacks where user_id= ${userId}; `
+            `select tech_name from USER_TECH_STACKS where user_id= ${userId}; `
         )
 
         return {userInfo, skill};
     }catch (err){
+        throw new Error(`오류 발생 파라미터 확인바람 (${err})`)
+    }finally {
+        conn.release();
+    }
+}
+
+// 팀 게시판 댓글 삭제
+export const deleteTalkData = async(data)=>{
+    const conn = await pool.getConnection();
+    try{
+        const [result] = await conn.query(
+            `select * from COMMENTS where id= ${data.commentsId};`
+        )
+        await conn.query(
+            `delete from COMMENTS where post_id = ${data.postsId} and id = ${data.commentsId};`
+        )
+
+        return result;
+    }catch(err){
         throw new Error(`오류 발생 파라미터 확인바람 (${err})`)
     }finally {
         conn.release();

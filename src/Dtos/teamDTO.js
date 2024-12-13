@@ -3,23 +3,25 @@ export const writeToPosts = (body, params) =>{
     return{
         teamId: params.teamId,
         userId: params.userId,
-        content: body.content,
+        postsId: params.postsId,
+        content: body.content
     }
 }
 
 // 팀 게시판 대화내용 등록 완료 전송
 export const responseFromPosts = (data) =>{
     return{
-        content: data.content,
         userId: data.user_id,
-        createdAt: data.created_at,
+        content: data.content,
+        createdAt: data.created_at
     }
 }
 
 // 팀 게시판 댓글 불러오기 요청 DTO
 export const teamIdToPosts = (params) =>{
     return{
-        teamId:params.teamId
+        teamId:params.teamId,
+        postsId:params.postsId
     }
 }
 
@@ -50,3 +52,18 @@ export const responseFromUserProfile = (data) =>{
     };
 }
 
+// 팀 게시판 대화내용 삭제 요청 DTO
+export const delToPosts = (data) =>{
+    return{
+        postsId:data.postsId,
+        commentsId : data.commentsId
+    }
+}
+
+//팀 게시판 대화내용 삭제 전송 DTO
+export const responseFromDeleteComments = (data) =>{
+    return{
+        userId : data[0].user_id,
+        content: data[0].content
+    }
+}
